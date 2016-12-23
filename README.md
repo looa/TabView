@@ -52,7 +52,31 @@ complie 'com.github.looa:TabView:0.0.1'
 
         TabBaseAdapter<String> adapter = new SimpleTabAdapter(getApplicationContext());
         adapter.setData(data);
+        adapter.setColorSelected(getResources().getColor(R.color.colorPrimary));
 
         tabView.setAdapter(adapter);
         tabView.setTabCurPosition(0, false);
+```
+and you can create your adapter to demand your requirements ↓↓↓
+```groovy
+public class SimpleTabAdapter extends TabBaseAdapter{
+
+  protected View onCreateTabView(ViewGroup parentView, int viewType, int position){
+    //create the tab view.
+  }
+
+  protected View onCreateCursor(View viewParent) {
+    //create the cursor, if you need.
+    return null;
+  }
+
+  protected void onSelectedTabView(View tabView, int position, boolean isSmooth){
+    //the tabView is selected.
+  }
+
+  protected void resetTabView(View tabView, int position){
+    //init or reset your tab view'values.
+  }
+
+}
 ```
