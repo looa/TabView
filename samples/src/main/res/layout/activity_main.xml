@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.looa.tabviewtest.MainActivity">
+
+    <org.looa.tabview.widget.TabView
+        android:id="@+id/tab_simple"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#efeff0"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
+</RelativeLayout>
