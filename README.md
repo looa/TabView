@@ -10,7 +10,7 @@ TabView supports OS on API 15 and above.
 include
 > * TabView
 > * VerticalTabView
-> * TabBashAdapter
+> * TabBaseAdapter
 > * SimpleTabAdapter
 > * SimpleVerticalTabAdapter
 
