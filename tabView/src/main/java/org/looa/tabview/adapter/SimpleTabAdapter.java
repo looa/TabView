@@ -36,8 +36,6 @@ public class SimpleTabAdapter extends TabBaseAdapter {
     public SimpleTabAdapter(Context context) {
         colorSelected = Color.parseColor("#b60909");
         colorUnSelected = Color.parseColor("#333333");
-        cursor = new View(context);
-        cursor.setBackgroundColor(colorSelected);
     }
 
     @Override
@@ -58,6 +56,8 @@ public class SimpleTabAdapter extends TabBaseAdapter {
     protected void onSelectedTabView(View tabView, int position, boolean isSmooth) {
         if (preView != null && preView == tabView) return;
 
+        if (onItemClickListener != null) onItemClickListener.onItemClick(tabView, position);
+
         cursorWidth = tabView.getWidth() - dip2px(tabView.getContext(), 27);
         int offSize = (tabView.getWidth() - cursor.getWidth()) / 2;
 
@@ -77,8 +77,6 @@ public class SimpleTabAdapter extends TabBaseAdapter {
 
         ((TextView) tabView).setTextColor(colorSelected);
 
-        if (onItemClickListener != null) onItemClickListener.onItemClick(tabView, position);
-
         if (preView != null && preView != tabView) {
             ((TextView) preView).setTextColor(colorUnSelected);
         }
@@ -96,6 +94,8 @@ public class SimpleTabAdapter extends TabBaseAdapter {
         RelativeLayout.LayoutParams paramsCursor = new RelativeLayout.LayoutParams(dip2px(viewParent.getContext(), cursorWidth),
                 dip2px(viewParent.getContext(), cursorHeight));
         paramsCursor.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        cursor = new View(viewParent.getContext());
+        cursor.setBackgroundColor(colorSelected);
         cursor.setLayoutParams(paramsCursor);
         return cursor;
     }
@@ -111,6 +111,7 @@ public class SimpleTabAdapter extends TabBaseAdapter {
      */
     public void setColorSelected(int colorSelected) {
         this.colorSelected = colorSelected;
+        if (cursor != null) cursor.setBackgroundColor(colorSelected);
     }
 
     public int getColorUnSelected() {

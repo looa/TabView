@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.looa.tabview.adapter.SimpleTabAdapter;
-import org.looa.tabview.widget.TabBaseAdapter;
 import org.looa.tabview.widget.TabView;
 
 import java.util.ArrayList;
@@ -33,8 +32,9 @@ public class MainActivity extends AppCompatActivity {
         TabView tabView = (TabView) findViewById(R.id.tab_simple);
         tabView.setSmoothShowEdgeSizeOff(100);
 
-        TabBaseAdapter<String> adapter = new SimpleTabAdapter(getApplicationContext());
+        SimpleTabAdapter adapter = new SimpleTabAdapter(getApplicationContext());
         adapter.setData(data);
+        adapter.setColorSelected(getResources().getColor(R.color.colorPrimary));
 
         tabView.setAdapter(adapter);
         tabView.setTabCurPosition(0, false);
