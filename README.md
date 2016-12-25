@@ -21,7 +21,7 @@ complie 'com.github.looa:TabView:0.0.4'
 ```
 
 ##Sample
-![screenshots](https://raw.githubusercontent.com/looa/TabView/master/REDEME/show_001.gif)
+![screenshots](https://raw.githubusercontent.com/looa/TabView/master/REDEME/show_001.gif)  ![sreenshots-02](https://raw.githubusercontent.com/looa/TabView/master/REDEME/show_002.gif)
 ###xml
 ```groovy
 <org.looa.tabview.widget.TabView
