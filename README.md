@@ -20,7 +20,7 @@ If you are building with Gradle, simply add the following line to the `dependenc
 complie 'com.github.looa:TabView:0.0.4'
 ```
 
-##Simple
+##Sample
 ![screenshots](https://raw.githubusercontent.com/looa/TabView/master/REDEME/show_001.gif)
 ###xml
 ```groovy
