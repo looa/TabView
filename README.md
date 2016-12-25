@@ -55,6 +55,10 @@ complie 'com.github.looa:TabView:0.0.4'
         adapter.setColorSelected(getResources().getColor(R.color.colorPrimary));
 
         tabView.setAdapter(adapter);
+        /**
+        * auto fill parent.
+        **/
+        tabView.setAutoFillParent(true);
         tabView.setTabCurPosition(0, false);
 ```
 and you can create your adapter to demand your requirements ↓↓↓

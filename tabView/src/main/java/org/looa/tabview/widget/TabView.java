@@ -1,5 +1,6 @@
 package org.looa.tabview.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,16 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A HorizontalScrollView is a {@link ScrollView}, meaning you should place one
+ * A TabView is a {@link ScrollView}, meaning you should place one
  * child in it containing the entire contents to scroll. But there's already
  * a holder here. The holder is the only one child, and the parent for other views.
  * The holder is a {@link RelativeLayout},meaning you can add lots of views
  * you want to add. You can use the getHolder() to get the holder;
  * You can use a custom view through the {@link TabBaseAdapter}.
- * You must set a {@link TabBaseAdapter} for a HorizontalScrollView.
- * When all tab total widths are not sufficient to fill the HorizontalTabView width,
+ * You must set a {@link TabBaseAdapter} for a TabView.
+ * When all tab total widths are not sufficient to fill the TabView width,
  * the remaining dimensions are assigned to each tab by default.
- * TODO 当所有的tab总宽度不足以填满整个控件宽时，默认把剩余尺寸平均分给每个tab（这一版不需要这样）
  * <p>
  * Created by looa on 2016/12/19.
  */
@@ -57,6 +57,10 @@ public class TabView extends HorizontalScrollView {
     private boolean hasMeasure = false;
 
     private boolean isSmooth;
+    /**
+     * auto fill the parent view.
+     */
+    private boolean isAutoFillParent = false;
 
     public TabView(Context context) {
         this(context, null);
@@ -72,6 +76,7 @@ public class TabView extends HorizontalScrollView {
         setSmoothShowEdgeItemEnable(true);
         setSmoothShowEdgeSizeOff(72);
         setSmooth(true);
+        setAutoFillParent(false);
     }
 
     private void initData() {
@@ -97,7 +102,7 @@ public class TabView extends HorizontalScrollView {
     }
 
     private void initTabView() {
-        if (tabViewList == null) return;
+        if (tabViewList == null || tabViewList.size() == 0) return;
         getHolder().removeAllViews();
         for (int i = 0; i < tabViewList.size(); i++) {
             if (i != 0) {
@@ -109,22 +114,34 @@ public class TabView extends HorizontalScrollView {
             tabViewList.get(i).setOnClickListener(onTabClickedListener);
             onUpdatedListener.update(i);
         }
+        tabViewList.get(0).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (hasMeasure && positionBeforeMeasure != -1) {
+                    setTabCurPosition(positionBeforeMeasure, positionBeforeMeasureIsSmooth);
+                    removeGlobalLayoutListener(getViewTreeObserver(), this);
+                }
+            }
+        });
         final View view;
         if ((view = adapter.onCreateCursor(this)) != null) {
             getHolder().addView(view);
-            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    hasMeasure = true;
-                    if (positionBeforeMeasure != -1)
-                        setTabCurPosition(positionBeforeMeasure, positionBeforeMeasureIsSmooth);
-                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-            });
-        } else {
-            if (positionBeforeMeasure != -1)
-                setTabCurPosition(positionBeforeMeasure, positionBeforeMeasureIsSmooth);
         }
+    }
+
+    @TargetApi(16)
+    private void removeGlobalLayoutListener(ViewTreeObserver observer, ViewTreeObserver.OnGlobalLayoutListener listener) {
+        observer.removeOnGlobalLayoutListener(listener);
+    }
+
+    /**
+     * the child can auto fill the parent.
+     *
+     * @param isAutoFillParent
+     */
+    public void setAutoFillParent(boolean isAutoFillParent) {
+        this.isAutoFillParent = isAutoFillParent;
+        setSmooth(!isAutoFillParent);
     }
 
     /**
@@ -208,6 +225,21 @@ public class TabView extends HorizontalScrollView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (getWidth() != 0 && !hasMeasure) {
+            hasMeasure = true;
+            if (isAutoFillParent) {
+                int viewWidth = getWidth();
+                int tabWidth = (int) (1f * viewWidth / tabViewList.size());
+                for (int i = 0; i < tabViewList.size(); i++) {
+                    tabViewList.get(i).getLayoutParams().width = tabWidth;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
     }
 
     /**

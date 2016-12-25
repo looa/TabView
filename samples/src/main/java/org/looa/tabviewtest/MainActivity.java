@@ -2,6 +2,9 @@ package org.looa.tabviewtest;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import org.looa.tabview.adapter.SimpleTabAdapter;
 import org.looa.tabview.widget.TabView;
@@ -19,14 +22,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> data = new ArrayList<>();
 
         data.add("Google");
-        data.add("Facebook");
-        data.add("Alibaba");
-        data.add("Tencent");
-        data.add("Microsoft");
-        data.add("Baidu");
-        data.add("Yahoo");
-        data.add("Ebay");
-        data.add("Amazon");
+        data.add("Uber");
         data.add("Magic Leap");
 
         TabView tabView = (TabView) findViewById(R.id.tab_simple);
@@ -34,9 +30,16 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleTabAdapter adapter = new SimpleTabAdapter(getApplicationContext());
         adapter.setData(data);
-        adapter.setColorSelected(getResources().getColor(R.color.colorPrimary));
+        adapter.setOnItemClickListener(new SimpleTabAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(getApplicationContext(), "position: " + position, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         tabView.setAdapter(adapter);
-        tabView.setTabCurPosition(0, false);
+        tabView.setAutoFillParent(true);
+        tabView.setSmooth(true);
+        tabView.setTabCurPosition(1, false);
     }
 }

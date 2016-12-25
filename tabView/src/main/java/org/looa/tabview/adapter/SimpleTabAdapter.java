@@ -54,9 +54,9 @@ public class SimpleTabAdapter extends TabBaseAdapter {
 
     @Override
     protected void onSelectedTabView(View tabView, int position, boolean isSmooth) {
-        if (preView != null && preView == tabView) return;
-
         if (onItemClickListener != null) onItemClickListener.onItemClick(tabView, position);
+
+        if (preView != null && preView == tabView) return;
 
         cursorWidth = tabView.getWidth() - dip2px(tabView.getContext(), 27);
         int offSize = (tabView.getWidth() - cursor.getWidth()) / 2;
