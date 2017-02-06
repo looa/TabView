@@ -1,13 +1,13 @@
 package org.looa.tabview.adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,9 +28,18 @@ public class SimpleVerticalTabAdapter extends TabBaseAdapter {
     private boolean hasAddCursor = false;
     private OnItemClickListener onItemClickListener;
 
-    private int tabHeight = 46;
+    private int tabHeight = 50;
 
     private int offY;
+
+    private ObjectAnimator animTranslate;
+    private ObjectAnimator animReduceX, animReduceY;
+    private ObjectAnimator animIncreaseX, animIncreaseY;
+    private AnimatorSet animSet;
+    private AnimListener animListener = new AnimListener();
+    private long duration = 250;
+    private boolean isFirstSelected = true;
+
 
     public SimpleVerticalTabAdapter(Context context) {
         offY = dip2px(context, tabHeight) / 2 - dip2px(context, 24) / 2;
@@ -45,16 +54,12 @@ public class SimpleVerticalTabAdapter extends TabBaseAdapter {
         TextView textView = new TextView(parentView.getContext());
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, dip2px(parentView.getContext(), tabHeight));
         textView.setLayoutParams(layoutParams);
-        textView.setTextColor(Color.parseColor("#333333"));
-        textView.setTextSize(14f);
+        textView.setTextColor(Color.parseColor("#000000"));
+        textView.setTextSize(13f);
         textView.setPadding(0, 0, 0, 0);
         textView.setGravity(Gravity.CENTER);
         return textView;
     }
-
-    private Animation animReduce, animIncrease;
-    private ObjectAnimator animTranslate;
-    private long duration = 250;
 
     @Override
     protected void onSelectedTabView(View tabView, int position, boolean isSmooth) {
@@ -63,32 +68,74 @@ public class SimpleVerticalTabAdapter extends TabBaseAdapter {
             viewGroup.addView(cursor, paramsTab);
             hasAddCursor = true;
         }
-        if ((animIncrease != null && !animIncrease.hasEnded()) || (animReduce != null && !animReduce.hasEnded()))
+        if ((animIncreaseX != null && animSet.isRunning()) || (animReduceX != null && animSet.isRunning()))
             return;
         if (preView != null && preView == tabView) return;
 
-        animIncrease = new ScaleAnimation(1, 1.2f, 1, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        animIncrease.setDuration(duration);
-        animIncrease.setFillAfter(true);
+        animSet = new AnimatorSet();
+        animIncreaseX = ObjectAnimator.ofFloat(tabView, "scaleX", 1 / 1.1f, 1f);
+        animIncreaseY = ObjectAnimator.ofFloat(tabView, "scaleY", 1 / 1.1f, 1f);
 
         animTranslate = ObjectAnimator.ofFloat(cursor, "translationY", cursor.getY(), tabView.getY() + offY);
-        animTranslate.setDuration(duration);
-        animTranslate.start();
 
-        tabView.startAnimation(animIncrease);
         ((TextView) tabView).setTextColor(Color.parseColor("#b60909"));
 
-
-        if (onItemClickListener != null) onItemClickListener.onItemClick(tabView, position);
-
-        if (preView != null && preView != tabView) {
-            animReduce = new ScaleAnimation(1.2f, 1, 1.2f, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            animReduce.setDuration(duration);
-            animReduce.setFillBefore(true);
-            preView.startAnimation(animReduce);
-            ((TextView) preView).setTextColor(Color.parseColor("#333333"));
+        if (onItemClickListener != null && !isFirstSelected) {
+            onItemClickListener.onItemClick(tabView, position);
         }
+        isFirstSelected = false;
+        if (preView != null && preView != tabView) {
+            ((TextView) preView).setTextColor(Color.parseColor("#000000"));
+            animReduceX = ObjectAnimator.ofFloat(preView, "scaleX", 1f, 1 / 1.1f);
+            animReduceY = ObjectAnimator.ofFloat(preView, "scaleY", 1f, 1 / 1.1f);
+            animSet.play(animIncreaseX).with(animIncreaseY).with(animTranslate).with(animReduceX).with(animReduceY);
+            animListener.setPreView((TextView) preView);
+        } else {
+            animSet.play(animIncreaseX).with(animIncreaseY).with(animTranslate);
+        }
+        animSet.setDuration(duration);
+        animSet.addListener(animListener);
+        animListener.setView((TextView) tabView);
+        animSet.start();
         preView = tabView;
+    }
+
+    private class AnimListener implements Animator.AnimatorListener {
+
+        private TextView view;
+        private TextView preView;
+
+        public void setView(TextView view) {
+            this.view = view;
+        }
+
+        public void setPreView(TextView preView) {
+            this.preView = preView;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            view.setTextSize(14f);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            if (preView != null) {
+                preView.setTextSize(13f);
+                preView.setScaleX(1f);
+                preView.setScaleY(1f);
+            }
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
     }
 
     @Override

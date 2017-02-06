@@ -41,6 +41,7 @@ public class TabView extends HorizontalScrollView {
     private List<View> tabViewList;
     private TabUpdatedListener onUpdatedListener = new TabUpdatedListener();
     private OnTabClickedListener onTabClickedListener = new OnTabClickedListener();
+    private OnItemClickListener onItemClickListener;
 
     /**
      * if isSmoothShowEdgeItem == true
@@ -144,6 +145,10 @@ public class TabView extends HorizontalScrollView {
         setSmooth(!isAutoFillParent);
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
     /**
      * HorizontalTabView can smoothly scroll the edge items to a friendly vision position.
      *
@@ -174,6 +179,7 @@ public class TabView extends HorizontalScrollView {
         @Override
         public void onClick(View v) {
             setTabPosition(v, v.getId() - 1, isSmooth());
+            if (onItemClickListener != null) onItemClickListener.onItemClick(v, v.getId() - 1);
         }
     }
 
@@ -225,7 +231,7 @@ public class TabView extends HorizontalScrollView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (getWidth() != 0 && !hasMeasure) {
+        if (getWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
             hasMeasure = true;
             if (isAutoFillParent) {
                 int viewWidth = getWidth();
@@ -293,5 +299,4 @@ public class TabView extends HorizontalScrollView {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
-
 }

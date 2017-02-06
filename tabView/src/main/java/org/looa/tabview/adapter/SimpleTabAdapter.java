@@ -27,9 +27,8 @@ public class SimpleTabAdapter extends TabBaseAdapter {
 
     private ViewGroup viewGroup;
 
-    private OnItemClickListener onItemClickListener;
-
-    private int cursorWidth = 39;//只在初始化的是dp，其他情况都是px
+    private int cursorWidth = 1;//px
+    private float preScaleX = 1f;
     private int colorSelected;
     private int colorUnSelected;
 
@@ -54,8 +53,6 @@ public class SimpleTabAdapter extends TabBaseAdapter {
 
     @Override
     protected void onSelectedTabView(View tabView, int position, boolean isSmooth) {
-        if (onItemClickListener != null) onItemClickListener.onItemClick(tabView, position);
-
         if (preView != null && preView == tabView) return;
 
         cursorWidth = tabView.getWidth() - dip2px(tabView.getContext(), 27);
@@ -65,14 +62,15 @@ public class SimpleTabAdapter extends TabBaseAdapter {
             long duration = 250;
             AnimatorSet animatorSet = new AnimatorSet();
             ObjectAnimator animTranslate = ObjectAnimator.ofFloat(cursor, "translationX", cursor.getX(), tabView.getX() + offSize);
-            ObjectAnimator animScale = ObjectAnimator.ofFloat(cursor, "scaleX", 1f, 1f * cursorWidth / cursor.getWidth());
+            ObjectAnimator animScale = ObjectAnimator.ofFloat(cursor, "scaleX", preScaleX, preScaleX = 1f * cursorWidth / cursor.getWidth());
             animatorSet.play(animTranslate).with(animScale);
             animatorSet.setInterpolator(new DecelerateInterpolator());
             animatorSet.setDuration(duration);
             animatorSet.start();
         } else {
             cursor.setTranslationX(tabView.getX() + offSize);
-            cursor.setScaleX(1f * cursorWidth / cursor.getWidth());
+            float scaleX = 1f * cursorWidth / cursor.getWidth();
+            cursor.setScaleX(preScaleX = scaleX);
         }
 
         ((TextView) tabView).setTextColor(colorSelected);
@@ -97,6 +95,7 @@ public class SimpleTabAdapter extends TabBaseAdapter {
         cursor = new View(viewParent.getContext());
         cursor.setBackgroundColor(colorSelected);
         cursor.setLayoutParams(paramsCursor);
+        cursor.setTranslationX(-dip2px(viewParent.getContext(), cursorWidth) - 200);
         return cursor;
     }
 
@@ -130,10 +129,6 @@ public class SimpleTabAdapter extends TabBaseAdapter {
     @Override
     public Object getData(int position) {
         return super.getData(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.onItemClickListener = listener;
     }
 
     public interface OnItemClickListener {
