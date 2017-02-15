@@ -1,5 +1,6 @@
 package org.looa.tabviewtest;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         tabView.setAdapter(adapter);
 //        tabView.setAutoFillParent(true);
         tabView.setTabCurPosition(2, false);
+        tabView.setBashLineColor(Color.LTGRAY);
 
         fragmentList = new ArrayList<>();
 

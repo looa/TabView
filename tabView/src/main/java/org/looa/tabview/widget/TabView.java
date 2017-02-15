@@ -2,6 +2,8 @@ package org.looa.tabview.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.Px;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -36,6 +38,10 @@ public class TabView extends HorizontalScrollView {
      */
     private RelativeLayout holder;
     private RelativeLayout.LayoutParams holderParams;
+
+
+    private View bashLine;
+    private int bashLineColor = Color.TRANSPARENT;
 
     private TabBaseAdapter adapter;
     private List<View> tabViewList;
@@ -89,6 +95,11 @@ public class TabView extends HorizontalScrollView {
         holderParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         addView(holder, holderParams);
+        bashLine = new View(context);
+        bashLine.setBackgroundColor(bashLineColor);
+        RelativeLayout.LayoutParams bashLineParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 1);
+        bashLineParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bashLine.setLayoutParams(bashLineParams);
     }
 
     private void initTabList() {
@@ -124,6 +135,7 @@ public class TabView extends HorizontalScrollView {
                 }
             }
         });
+        getHolder().addView(bashLine);
         final View view;
         if ((view = adapter.onCreateCursor(this)) != null) {
             getHolder().addView(view);
@@ -133,6 +145,27 @@ public class TabView extends HorizontalScrollView {
     @TargetApi(16)
     private void removeGlobalLayoutListener(ViewTreeObserver observer, ViewTreeObserver.OnGlobalLayoutListener listener) {
         observer.removeOnGlobalLayoutListener(listener);
+    }
+
+    /**
+     * set bash line color.
+     * default color is Color.TRANSPARENT.
+     *
+     * @param color Color.XXX;
+     */
+    public void setBashLineColor(int color) {
+        this.bashLineColor = color;
+        if (bashLine != null) bashLine.setBackgroundColor(color);
+    }
+
+    /**
+     * set bash line height.
+     * default height is 1 px.
+     *
+     * @param height px
+     */
+    public void setBashLineHeight(@Px int height) {
+        if (bashLine != null) bashLine.getLayoutParams().height = height;
     }
 
     /**
@@ -233,13 +266,15 @@ public class TabView extends HorizontalScrollView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (getWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
             hasMeasure = true;
+            int viewWidth = getWidth();
+            int holderWidth = getHolder().getWidth();
             if (isAutoFillParent) {
-                int viewWidth = getWidth();
                 int tabWidth = (int) (1f * viewWidth / tabViewList.size());
                 for (int i = 0; i < tabViewList.size(); i++) {
                     tabViewList.get(i).getLayoutParams().width = tabWidth;
                 }
             }
+            bashLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
         }
     }
 
