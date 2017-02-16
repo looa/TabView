@@ -42,6 +42,8 @@ public class TabView extends HorizontalScrollView {
 
     private View bashLine;
     private int bashLineColor = Color.TRANSPARENT;
+    private View topLine;
+    private int topLineColor = Color.TRANSPARENT;
 
     private TabBaseAdapter adapter;
     private List<View> tabViewList;
@@ -100,6 +102,12 @@ public class TabView extends HorizontalScrollView {
         RelativeLayout.LayoutParams bashLineParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 1);
         bashLineParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         bashLine.setLayoutParams(bashLineParams);
+
+        topLine = new View(context);
+        topLine.setBackgroundColor(topLineColor);
+        RelativeLayout.LayoutParams topLineParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 1);
+        topLineParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        topLine.setLayoutParams(topLineParams);
     }
 
     private void initTabList() {
@@ -136,6 +144,7 @@ public class TabView extends HorizontalScrollView {
             }
         });
         getHolder().addView(bashLine);
+        getHolder().addView(topLine);
         final View view;
         if ((view = adapter.onCreateCursor(this)) != null) {
             getHolder().addView(view);
@@ -166,6 +175,27 @@ public class TabView extends HorizontalScrollView {
      */
     public void setBashLineHeight(@Px int height) {
         if (bashLine != null) bashLine.getLayoutParams().height = height;
+    }
+
+    /**
+     * set top line color.
+     * default color is Color.TRANSPARENT.
+     *
+     * @param color Color.XXX;
+     */
+    public void setTopLineColor(int color) {
+        this.topLineColor = color;
+        if (topLine != null) topLine.setBackgroundColor(color);
+    }
+
+    /**
+     * set top line height.
+     * default height is 1 px.
+     *
+     * @param height px
+     */
+    public void setTopLineHeight(@Px int height) {
+        if (topLine != null) topLine.getLayoutParams().height = height;
     }
 
     /**
@@ -275,6 +305,7 @@ public class TabView extends HorizontalScrollView {
                 }
             }
             bashLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
+            topLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
         }
     }
 

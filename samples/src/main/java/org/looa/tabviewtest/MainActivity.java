@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 //        tabView.setAutoFillParent(true);
         tabView.setTabCurPosition(2, false);
         tabView.setBashLineColor(Color.LTGRAY);
+        tabView.setTopLineColor(Color.LTGRAY);
 
         fragmentList = new ArrayList<>();
 
