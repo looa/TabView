@@ -19,7 +19,7 @@ include
 ##Using TabView in your Application
 If you are building with Gradle, simply add the following line to the `dependencies` section of your `build.gradle` file:
 ```groovy
-complie 'com.github.looa:TabView:0.0.7'
+complie 'com.github.looa:TabView:0.0.8'
 ```
 
 ##Sample
@@ -51,7 +51,8 @@ complie 'com.github.looa:TabView:0.0.7'
 
         TabView tabView = (TabView) findViewById(R.id.tab_simple);
         tabView.setSmoothShowEdgeSizeOff(100);
-        tabView.setBashLineColor(Color.BLACK);
+        tabView.setBashLineColor(Color.LTGRAY);
+        tabView.setTopLineColor(Color.LTGRAY);
         
         SimpleTabAdapter adapter = new SimpleTabAdapter(getApplicationContext());
         adapter.setData(data);
