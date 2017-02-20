@@ -293,7 +293,6 @@ public class TabView extends HorizontalScrollView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int viewWidth = getWidth();
         int holderWidth = getHolder().getWidth();
         if (getWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
@@ -309,6 +308,7 @@ public class TabView extends HorizontalScrollView {
         topLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
         bashLine.setLayoutParams(bashLine.getLayoutParams());
         topLine.setLayoutParams(topLine.getLayoutParams());
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
