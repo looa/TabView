@@ -63,7 +63,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
 
     private int scrollSize;
 
-    private int positionBeforeMeasure = -1;
+    private int positionBeforeMeasure = 0;
     private boolean positionBeforeMeasureIsSmooth = false;
     private boolean hasMeasure = false;
 
@@ -100,6 +100,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
     }
 
     private void initView(Context context) {
+        setFillViewport(true);
         holder = new RelativeLayout(context);
         holderParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -150,7 +151,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         tabViewList.get(0).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (hasMeasure && positionBeforeMeasure != -1) {
+                if (hasMeasure) {
                     setTabCurPosition(positionBeforeMeasure, positionBeforeMeasureIsSmooth);
                     removeGlobalLayoutListener(getViewTreeObserver(), this);
                 }
@@ -163,11 +164,20 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         observer.removeOnGlobalLayoutListener(listener);
     }
 
-    public int getPosition() {
+    /**
+     * 获取当前位置，未初始化的时候返回positionBeforeMeasure
+     *
+     * @return
+     */
+    public int getCurPosition() {
+        return position == -1 ? positionBeforeMeasure : position;
+    }
+
+    private int getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    private void setPosition(int position) {
         this.position = position;
     }
 
@@ -253,7 +263,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
 
     @Override
     public void onPageSelected(int position) {
-        setTabCurPosition(position, true);
+        setTabCurPosition(position, isSmooth());
     }
 
     @Override
@@ -378,7 +388,6 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         @Override
         public void replace() {
             hasMeasure = false;
-            positionBeforeMeasure = -1;
             initTabList();
             initTabView();
         }

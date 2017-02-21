@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final TabView tabView = (TabView) findViewById(R.id.tab_simple);
-        tabView.setTabCurPosition(0, false);
+        tabView.setTabCurPosition(3, false);
         tabView.setSmoothShowEdgeSizeOff(100);
 
         SimpleTabAdapter adapter = new SimpleTabAdapter(getApplicationContext());
@@ -48,11 +48,6 @@ public class MainActivity extends AppCompatActivity {
         tabView.setAdapter(adapter);
         tabView.setBashLineColor(Color.LTGRAY);
         tabView.setTopLineColor(Color.LTGRAY);
-
-        for (int i = 5; i < 15; i++) {
-            data.add("Google " + i);
-        }
-        adapter.notifyDataSetChanged();
 
         fragmentList = new ArrayList<>();
 
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         };
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(tabView.getCurPosition());
         viewPager.addOnPageChangeListener(tabView);
     }
 }
