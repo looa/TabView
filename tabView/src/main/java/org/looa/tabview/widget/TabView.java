@@ -377,6 +377,8 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
 
         @Override
         public void replace() {
+            hasMeasure = false;
+            positionBeforeMeasure = -1;
             initTabList();
             initTabView();
         }
