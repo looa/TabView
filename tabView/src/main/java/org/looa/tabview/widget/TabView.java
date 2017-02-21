@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Px;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -29,7 +30,7 @@ import java.util.List;
  * Created by looa on 2016/12/19.
  */
 
-public class TabView extends HorizontalScrollView {
+public class TabView extends HorizontalScrollView implements ViewPager.OnPageChangeListener {
 
     /**
      * A ScrollView is a {@link FrameLayout}, meaning you should place one child in it
@@ -47,6 +48,7 @@ public class TabView extends HorizontalScrollView {
 
     private TabBaseAdapter adapter;
     private List<View> tabViewList;
+    private View cursorView;
     private TabUpdatedListener onUpdatedListener = new TabUpdatedListener();
     private OnTabClickedListener onTabClickedListener = new OnTabClickedListener();
     private OnItemClickListener onItemClickListener;
@@ -70,6 +72,11 @@ public class TabView extends HorizontalScrollView {
      * auto fill the parent view.
      */
     private boolean isAutoFillParent = false;
+
+    /**
+     * 当前位置
+     */
+    private int position = -1;
 
     public TabView(Context context) {
         this(context, null);
@@ -119,6 +126,7 @@ public class TabView extends HorizontalScrollView {
             tabViewList.add(i, adapter.onCreateTabView(getHolder(), adapter.getItemViewType(i), i));
             tabViewList.get(i).setId(i + 1);
         }
+        cursorView = adapter.onCreateCursor(this);
     }
 
     private void initTabView() {
@@ -134,6 +142,11 @@ public class TabView extends HorizontalScrollView {
             tabViewList.get(i).setOnClickListener(onTabClickedListener);
             onUpdatedListener.update(i);
         }
+        getHolder().addView(bashLine);
+        getHolder().addView(topLine);
+        if (cursorView != null) {
+            getHolder().addView(cursorView);
+        }
         tabViewList.get(0).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -143,17 +156,19 @@ public class TabView extends HorizontalScrollView {
                 }
             }
         });
-        getHolder().addView(bashLine);
-        getHolder().addView(topLine);
-        final View view;
-        if ((view = adapter.onCreateCursor(this)) != null) {
-            getHolder().addView(view);
-        }
     }
 
     @TargetApi(16)
     private void removeGlobalLayoutListener(ViewTreeObserver observer, ViewTreeObserver.OnGlobalLayoutListener listener) {
         observer.removeOnGlobalLayoutListener(listener);
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     /**
@@ -231,6 +246,21 @@ public class TabView extends HorizontalScrollView {
         this.sizeOff = dip2px(getContext(), sizeOff);
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        setTabCurPosition(position, true);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
 
     private class OnTabClickedListener implements OnClickListener {
 
@@ -257,7 +287,7 @@ public class TabView extends HorizontalScrollView {
     /**
      * set the current position and scroll the view to a right place.
      *
-     * @param position
+     * @param position position
      * @param isSmooth if isSmooth = true, the view will smoothly scroll.
      */
     public void setTabCurPosition(int position, boolean isSmooth) {
@@ -276,6 +306,8 @@ public class TabView extends HorizontalScrollView {
      * @param position view -position
      */
     private void setTabPosition(View view, int position, boolean isSmooth) {
+        if (getPosition() == position) return;
+        setPosition(position);
         adapter.onSelectedTabView(view, position, isSmooth);
         if (isSmoothShowEdgeItem && sizeOff > 0) {
             View tabView = getTabView(position);
@@ -293,9 +325,10 @@ public class TabView extends HorizontalScrollView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int viewWidth = getWidth();
-        int holderWidth = getHolder().getWidth();
-        if (getWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int viewWidth = getMeasuredWidth();
+        int holderWidth = getHolder().getMeasuredWidth();
+        if (getMeasuredWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
             hasMeasure = true;
             if (isAutoFillParent) {
                 int tabWidth = (int) (1f * viewWidth / tabViewList.size());
@@ -306,9 +339,6 @@ public class TabView extends HorizontalScrollView {
         }
         bashLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
         topLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
-        bashLine.setLayoutParams(bashLine.getLayoutParams());
-        topLine.setLayoutParams(topLine.getLayoutParams());
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override

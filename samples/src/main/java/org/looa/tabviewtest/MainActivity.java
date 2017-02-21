@@ -27,16 +27,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final List<String> data = new ArrayList<>();
-
-        data.add("Google");
-        data.add("Uber");
-        data.add("Magic Leap AR Glass.");
-
         final TabView tabView = (TabView) findViewById(R.id.tab_simple);
+        tabView.setTabCurPosition(0, false);
         tabView.setSmoothShowEdgeSizeOff(100);
 
         SimpleTabAdapter adapter = new SimpleTabAdapter(getApplicationContext());
+        final List<String> data = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            data.add("Google " + i);
+        }
         adapter.setData(data);
         tabView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -47,10 +46,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         tabView.setAdapter(adapter);
-//        tabView.setAutoFillParent(true);
-        tabView.setTabCurPosition(2, false);
         tabView.setBashLineColor(Color.LTGRAY);
         tabView.setTopLineColor(Color.LTGRAY);
+
+        for (int i = 5; i < 15; i++) {
+            data.add("Google " + i);
+        }
+        adapter.notifyDataSetChanged();
 
         fragmentList = new ArrayList<>();
 
@@ -74,23 +76,7 @@ public class MainActivity extends AppCompatActivity {
         };
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(2);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                tabView.setTabCurPosition(viewPager.getCurrentItem(), positionOffset);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                tabView.setTabCurPosition(position, true);
-                Log.d(getClass().getName(), "onPageSelected current position -> " + position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(tabView);
     }
 }
