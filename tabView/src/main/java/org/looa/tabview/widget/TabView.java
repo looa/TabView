@@ -119,15 +119,24 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
     }
 
     private void initTabList() {
+        int start = 0;
         int tabCount = adapter.getCount();
-        if (tabViewList == null)
+        if (tabViewList == null) {
             tabViewList = new ArrayList<>(tabCount);
-        else tabViewList.clear();
-        for (int i = 0; i < tabCount; i++) {
+        } else if (tabViewList.size() <= tabCount) {
+            start = tabViewList.size();
+        } else {
+            start = tabCount;
+            int end = tabViewList.size();
+            for (int i = start; i < end; i++) {
+                tabViewList.remove(tabViewList.size() - 1);
+            }
+        }
+        for (int i = start; i < tabCount; i++) {
             tabViewList.add(i, adapter.onCreateTabView(getHolder(), adapter.getItemViewType(i), i));
             tabViewList.get(i).setId(i + 1);
         }
-        cursorView = adapter.onCreateCursor(this);
+        if (cursorView == null) cursorView = adapter.onCreateCursor(this);
     }
 
     private void initTabView() {
@@ -338,7 +347,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int viewWidth = getMeasuredWidth();
         int holderWidth = getHolder().getMeasuredWidth();
-        if (getMeasuredWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
+        if (getWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
             hasMeasure = true;
             if (isAutoFillParent) {
                 int tabWidth = (int) (1f * viewWidth / tabViewList.size());
@@ -347,8 +356,11 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
                 }
             }
         }
-        bashLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
-        topLine.getLayoutParams().width = Math.max(viewWidth, holderWidth);
+        int maxWidth = Math.max(viewWidth, holderWidth);
+        if (bashLine.getLayoutParams().width != maxWidth) {
+            bashLine.getLayoutParams().width = maxWidth;
+            topLine.getLayoutParams().width = maxWidth;
+        }
     }
 
     @Override
