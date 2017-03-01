@@ -74,6 +74,19 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
     private boolean isAutoFillParent = false;
 
     /**
+     * 是否是点击事件引起的动效
+     */
+    private boolean isClickScroll = false;
+    /**
+     * 手指的滑动方向，-1代表在左侧，1代表在右侧，0代表在中心
+     */
+    private int scrollOrientation = 0;
+    /**
+     * 移向目标位置的百分比
+     */
+    private float targetOffset;
+
+    /**
      * 当前位置
      */
     private int position = -1;
@@ -265,14 +278,45 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         this.sizeOff = dip2px(getContext(), sizeOff);
     }
 
+    ///////onPageChangeListener////
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+//        if (positionOffset != 0 && scrollOrientation == 0) {
+//            scrollOrientation = positionOffset > 0.5f ? 1 : -1;
+//        }
+//        if (positionOffset == 0) {
+//            isClickScroll = false;
+//            scrollOrientation = 0;
+//            if (adapter != null)
+//                adapter.onTabScrolled(tabViewList.get(position), position, positionOffset, false);
+//        } else if (!isClickScroll) {
+//            //向右滑动的时候，目标位置等于position，反之等于position + 1
+//            int targetPosition = scrollOrientation == 1 ? position : position + 1;
+//            float targetOffset = scrollOrientation == 1 ? 1 - positionOffset : positionOffset;
+//            this.targetOffset = targetOffset;
+//            adapter.onTabScrolled(tabViewList.get(targetPosition), targetPosition, targetOffset, false);
+//        }
     }
 
     @Override
     public void onPageSelected(int position) {
         setTabCurPosition(position, isSmooth());
+//        Log.i(getClass().getSimpleName(), "onPageSelected -> " + position);
+//        adapter.onTabScrolled(tabViewList.get(position), position, targetOffset, true);
+//        setPosition(position);
+//        if (isSmoothShowEdgeItem && sizeOff > 0) {
+//            View tabView = getTabView(position);
+//            if (tabView == null) return;
+//            if (tabWidth == 0) tabWidth = tabView.getWidth();
+//            float dx = tabView.getX() - scrollSize;
+//            if (dx > sizeOff && dx < getWidth() - sizeOff - tabWidth) return;
+//            if (isSmooth) {
+//                smoothScrollBy(dx <= sizeOff ? (int) (dx - sizeOff) : (int) (dx - getWidth() + sizeOff + tabWidth), 0);
+//            } else {
+//                scrollBy(dx <= sizeOff ? (int) (dx - sizeOff) : (int) (dx - getWidth() + sizeOff + tabWidth), 0);
+//            }
+//        }
     }
 
     @Override
@@ -280,6 +324,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
 
     }
 
+    ////////////////////////////////
 
     private class OnTabClickedListener implements OnClickListener {
 
@@ -290,7 +335,8 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
          */
         @Override
         public void onClick(View v) {
-            setTabPosition(v, v.getId() - 1, isSmooth());
+            isClickScroll = true;
+            setTabPosition(v.getId() - 1, isSmooth());
             if (onItemClickListener != null) onItemClickListener.onItemClick(v, v.getId() - 1);
         }
     }
@@ -315,19 +361,18 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
             this.positionBeforeMeasureIsSmooth = isSmooth;
             return;
         }
-        setTabPosition(tabViewList.get(position), position, isSmooth);
+        setTabPosition(position, isSmooth);
     }
 
     /**
      * set the current position and scroll the view to a right place.
      *
-     * @param view     view - position
      * @param position view -position
      */
-    private void setTabPosition(View view, int position, boolean isSmooth) {
+    private void setTabPosition(int position, boolean isSmooth) {
         if (getPosition() == position) return;
         setPosition(position);
-        adapter.onSelectedTabView(view, position, isSmooth);
+        adapter.onSelectedTabView(getTabView(position), position, isSmooth);
         if (isSmoothShowEdgeItem && sizeOff > 0) {
             View tabView = getTabView(position);
             if (tabView == null) return;

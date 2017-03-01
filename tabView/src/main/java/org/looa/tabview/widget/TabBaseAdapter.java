@@ -91,6 +91,19 @@ public abstract class TabBaseAdapter<T> {
      */
     protected abstract void onSelectedTabView(View tabView, int position, boolean isSmooth);
 
+
+    /**
+     * Scrolls tab view to target position;
+     *
+     * @param tabView        target view.
+     * @param position       target position.
+     * @param positionOffset Value from [0, 1) indicating the offset to the page(target) at position
+     * @param isPageSelected is page selected
+     */
+    protected void onTabScrolled(View tabView, int position, float positionOffset, boolean isPageSelected) {
+
+    }
+
     /**
      * Reset the view corresponding to the position.
      * You can initialize a tabView or update a tabView.

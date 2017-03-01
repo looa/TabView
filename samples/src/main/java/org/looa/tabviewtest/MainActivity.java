@@ -33,9 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleTabAdapter adapter = new SimpleTabAdapter(getApplicationContext());
         final List<String> data = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            data.add("Google " + i);
-        }
+        data.add("ahh");
+        data.add("ahh - Google");
+        data.add("ahh - Facebook");
+        data.add("ahh");
+        data.add("ahh - Ebay");
+        data.add("ahh - Magic Leap");
+        data.add("ahh");
+        data.add("ahh - Alibaba");
+        data.add("ahh - Tencent");
         adapter.setData(data);
         tabView.setOnItemClickListener(new OnItemClickListener() {
             @Override
