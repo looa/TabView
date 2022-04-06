@@ -1,10 +1,9 @@
 package org.looa.tabview.widget;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.Px;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -12,6 +11,9 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
+import androidx.annotation.Px;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +51,8 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
     private TabBaseAdapter adapter;
     private List<View> tabViewList;
     private View cursorView;
-    private TabUpdatedListener onUpdatedListener = new TabUpdatedListener();
-    private OnTabClickedListener onTabClickedListener = new OnTabClickedListener();
+    private final TabUpdatedListener onUpdatedListener = new TabUpdatedListener();
+    private final OnTabClickedListener onTabClickedListener = new OnTabClickedListener();
     private OnItemClickListener onItemClickListener;
 
     /**
@@ -146,19 +148,27 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
             }
         }
         for (int i = start; i < tabCount; i++) {
-            tabViewList.add(i, adapter.onCreateTabView(getHolder(), adapter.getItemViewType(i), i));
+            View view = adapter.onCreateTabView(getHolder(),
+                    adapter.getItemViewType(i),
+                    i);
+            tabViewList.add(i, view);
             tabViewList.get(i).setId(i + 1);
         }
-        if (cursorView == null) cursorView = adapter.onCreateCursor(this);
+        if (cursorView == null) {
+            cursorView = adapter.onCreateCursor(this);
+        }
     }
 
     private void initTabView() {
-        if (tabViewList == null || tabViewList.size() == 0) return;
+        if (tabViewList == null || tabViewList.size() == 0) {
+            return;
+        }
         getHolder().removeAllViews();
+
         for (int i = 0; i < tabViewList.size(); i++) {
             if (i != 0) {
-                ((RelativeLayout.LayoutParams) tabViewList.get(i).getLayoutParams()).addRule(RelativeLayout.RIGHT_OF,
-                        tabViewList.get(i - 1).getId());
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) tabViewList.get(i).getLayoutParams();
+                lp.addRule(RelativeLayout.RIGHT_OF, tabViewList.get(i - 1).getId());
             }
             getHolder().addView(tabViewList.get(i));
 
@@ -167,9 +177,11 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         }
         getHolder().addView(bashLine);
         getHolder().addView(topLine);
+
         if (cursorView != null) {
             getHolder().addView(cursorView);
         }
+
         tabViewList.get(0).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -182,14 +194,15 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
     }
 
     @TargetApi(16)
-    private void removeGlobalLayoutListener(ViewTreeObserver observer, ViewTreeObserver.OnGlobalLayoutListener listener) {
+    private void removeGlobalLayoutListener(ViewTreeObserver observer,
+                                            ViewTreeObserver.OnGlobalLayoutListener listener) {
         observer.removeOnGlobalLayoutListener(listener);
     }
 
     /**
      * 获取当前位置，未初始化的时候返回positionBeforeMeasure
      *
-     * @return
+     * @return current position
      */
     public int getCurPosition() {
         return position == -1 ? positionBeforeMeasure : position;
@@ -211,7 +224,9 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
      */
     public void setBashLineColor(int color) {
         this.bashLineColor = color;
-        if (bashLine != null) bashLine.setBackgroundColor(color);
+        if (bashLine != null) {
+            bashLine.setBackgroundColor(color);
+        }
     }
 
     /**
@@ -221,7 +236,9 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
      * @param height px
      */
     public void setBashLineHeight(@Px int height) {
-        if (bashLine != null) bashLine.getLayoutParams().height = height;
+        if (bashLine != null) {
+            bashLine.getLayoutParams().height = height;
+        }
     }
 
     /**
@@ -232,7 +249,9 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
      */
     public void setTopLineColor(int color) {
         this.topLineColor = color;
-        if (topLine != null) topLine.setBackgroundColor(color);
+        if (topLine != null) {
+            topLine.setBackgroundColor(color);
+        }
     }
 
     /**
@@ -242,13 +261,15 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
      * @param height px
      */
     public void setTopLineHeight(@Px int height) {
-        if (topLine != null) topLine.getLayoutParams().height = height;
+        if (topLine != null) {
+            topLine.getLayoutParams().height = height;
+        }
     }
 
     /**
      * the child can auto fill the parent.
      *
-     * @param isAutoFillParent
+     * @param isAutoFillParent auto fill parent
      */
     public void setAutoFillParent(boolean isAutoFillParent) {
         this.isAutoFillParent = isAutoFillParent;
@@ -282,41 +303,11 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//        if (positionOffset != 0 && scrollOrientation == 0) {
-//            scrollOrientation = positionOffset > 0.5f ? 1 : -1;
-//        }
-//        if (positionOffset == 0) {
-//            isClickScroll = false;
-//            scrollOrientation = 0;
-//            if (adapter != null)
-//                adapter.onTabScrolled(tabViewList.get(position), position, positionOffset, false);
-//        } else if (!isClickScroll) {
-//            //向右滑动的时候，目标位置等于position，反之等于position + 1
-//            int targetPosition = scrollOrientation == 1 ? position : position + 1;
-//            float targetOffset = scrollOrientation == 1 ? 1 - positionOffset : positionOffset;
-//            this.targetOffset = targetOffset;
-//            adapter.onTabScrolled(tabViewList.get(targetPosition), targetPosition, targetOffset, false);
-//        }
     }
 
     @Override
     public void onPageSelected(int position) {
         setTabCurPosition(position, isSmooth());
-//        Log.i(getClass().getSimpleName(), "onPageSelected -> " + position);
-//        adapter.onTabScrolled(tabViewList.get(position), position, targetOffset, true);
-//        setPosition(position);
-//        if (isSmoothShowEdgeItem && sizeOff > 0) {
-//            View tabView = getTabView(position);
-//            if (tabView == null) return;
-//            if (tabWidth == 0) tabWidth = tabView.getWidth();
-//            float dx = tabView.getX() - scrollSize;
-//            if (dx > sizeOff && dx < getWidth() - sizeOff - tabWidth) return;
-//            if (isSmooth) {
-//                smoothScrollBy(dx <= sizeOff ? (int) (dx - sizeOff) : (int) (dx - getWidth() + sizeOff + tabWidth), 0);
-//            } else {
-//                scrollBy(dx <= sizeOff ? (int) (dx - sizeOff) : (int) (dx - getWidth() + sizeOff + tabWidth), 0);
-//            }
-//        }
     }
 
     @Override
@@ -331,13 +322,16 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         /**
          * tabView's id is position+1;
          *
-         * @param v
+         * @param v current view
          */
+        @SuppressLint("ResourceType")
         @Override
         public void onClick(View v) {
             isClickScroll = true;
             setTabPosition(v.getId() - 1, isSmooth());
-            if (onItemClickListener != null) onItemClickListener.onItemClick(v, v.getId() - 1);
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(v, v.getId() - 1);
+            }
         }
     }
 
@@ -370,7 +364,9 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
      * @param position view -position
      */
     private void setTabPosition(int position, boolean isSmooth) {
-        if (getPosition() == position) return;
+        if (getPosition() == position) {
+            return;
+        }
         setPosition(position);
         adapter.onSelectedTabView(getTabView(position), position, isSmooth);
         if (isSmoothShowEdgeItem && sizeOff > 0) {
@@ -392,9 +388,12 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int viewWidth = getMeasuredWidth();
         int holderWidth = getHolder().getMeasuredWidth();
-        if (getWidth() != 0 && !hasMeasure && tabViewList != null && tabViewList.size() > 0) {
+
+        if (viewWidth > 0 && !hasMeasure) {
             hasMeasure = true;
-            if (isAutoFillParent) {
+
+            // 如果是 auto fill parent，需要重置各子 view 宽度
+            if (tabViewList != null && tabViewList.size() > 0 && isAutoFillParent) {
                 int tabWidth = (int) (1f * viewWidth / tabViewList.size());
                 for (int i = 0; i < tabViewList.size(); i++) {
                     tabViewList.get(i).getLayoutParams().width = tabWidth;
@@ -433,7 +432,7 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         return tabViewList.get(position);
     }
 
-    public void setAdapter(TabBaseAdapter adapter) {
+    public <T> void setAdapter(TabBaseAdapter<T> adapter) {
         this.adapter = adapter;
         this.adapter.setOnUpdateListener(onUpdatedListener);
         initData();
@@ -444,7 +443,10 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
 
         @Override
         public void replace() {
+            positionBeforeMeasure = 0;
+            positionBeforeMeasureIsSmooth = false;
             hasMeasure = false;
+            position = -1;
             initTabList();
             initTabView();
         }

@@ -21,13 +21,13 @@ import org.looa.tabview.widget.TabBaseAdapter;
  * Created by looa on 2016/12/20.
  */
 
-public class SimpleTabAdapter extends TabBaseAdapter {
+public class SimpleTabAdapter extends TabBaseAdapter<String> {
     private View preView;
     private View cursor;
 
     private ViewGroup viewGroup;
 
-    private int cursorWidth = 1;//px
+    private int cursorWidth = 1; // px
     private float preScaleX = 1f;
     private int colorSelected;
     private int colorUnSelected;
@@ -39,10 +39,13 @@ public class SimpleTabAdapter extends TabBaseAdapter {
 
     @Override
     protected View onCreateTabView(ViewGroup parentView, int viewType, int position) {
-        if (viewGroup == null) viewGroup = parentView;
+        if (viewGroup == null) {
+            viewGroup = parentView;
+        }
         int padding = dip2px(parentView.getContext(), 20);
         TextView textView = new TextView(parentView.getContext());
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
         textView.setLayoutParams(layoutParams);
         textView.setTextColor(colorUnSelected);
         textView.setTextSize(13f);
@@ -53,7 +56,9 @@ public class SimpleTabAdapter extends TabBaseAdapter {
 
     @Override
     protected void onSelectedTabView(View tabView, int position, boolean isSmooth) {
-        if (preView != null && preView == tabView) return;
+        if (preView != null && preView == tabView) {
+            return;
+        }
 
         cursorWidth = tabView.getWidth() - dip2px(tabView.getContext(), 27);
         int offSize = (tabView.getWidth() - cursor.getWidth()) / 2;
@@ -61,8 +66,14 @@ public class SimpleTabAdapter extends TabBaseAdapter {
         if (isSmooth) {
             long duration = 250;
             AnimatorSet animatorSet = new AnimatorSet();
-            ObjectAnimator animTranslate = ObjectAnimator.ofFloat(cursor, "translationX", cursor.getX(), tabView.getX() + offSize);
-            ObjectAnimator animScale = ObjectAnimator.ofFloat(cursor, "scaleX", preScaleX, preScaleX = 1f * cursorWidth / cursor.getWidth());
+            ObjectAnimator animTranslate = ObjectAnimator.ofFloat(cursor,
+                    "translationX",
+                    cursor.getX(),
+                    tabView.getX() + offSize);
+            ObjectAnimator animScale = ObjectAnimator.ofFloat(cursor,
+                    "scaleX",
+                    preScaleX,
+                    preScaleX = 1f * cursorWidth / cursor.getWidth());
             animatorSet.play(animTranslate).with(animScale);
             animatorSet.setInterpolator(new DecelerateInterpolator());
             animatorSet.setDuration(duration);
@@ -89,8 +100,10 @@ public class SimpleTabAdapter extends TabBaseAdapter {
     @Override
     protected View onCreateCursor(View viewParent) {
         int cursorHeight = 2;
-        RelativeLayout.LayoutParams paramsCursor = new RelativeLayout.LayoutParams(dip2px(viewParent.getContext(), cursorWidth),
-                dip2px(viewParent.getContext(), cursorHeight));
+        RelativeLayout.LayoutParams paramsCursor = new RelativeLayout.LayoutParams(dip2px(viewParent.getContext(),
+                cursorWidth),
+                dip2px(viewParent.getContext(),
+                        cursorHeight));
         paramsCursor.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         cursor = new View(viewParent.getContext());
         cursor.setBackgroundColor(colorSelected);
@@ -110,7 +123,9 @@ public class SimpleTabAdapter extends TabBaseAdapter {
      */
     public void setColorSelected(int colorSelected) {
         this.colorSelected = colorSelected;
-        if (cursor != null) cursor.setBackgroundColor(colorSelected);
+        if (cursor != null) {
+            cursor.setBackgroundColor(colorSelected);
+        }
     }
 
     public int getColorUnSelected() {
@@ -127,7 +142,7 @@ public class SimpleTabAdapter extends TabBaseAdapter {
     }
 
     @Override
-    public Object getData(int position) {
+    public String getData(int position) {
         return super.getData(position);
     }
 

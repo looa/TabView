@@ -19,24 +19,24 @@ import org.looa.tabview.widget.TabBaseAdapter;
  * Created by looa on 2016/12/20.
  */
 
-public class SimpleVerticalTabAdapter extends TabBaseAdapter {
+public class SimpleVerticalTabAdapter extends TabBaseAdapter<String> {
     private View preView;
-    private View cursor;
+    private final View cursor;
 
     private ViewGroup viewGroup;
 
     private boolean hasAddCursor = false;
     private OnItemClickListener onItemClickListener;
 
-    private int tabHeight = 50;
+    private final int tabHeight = 50;
 
-    private int offY;
+    private final int offY;
 
     private ObjectAnimator animTranslate;
     private ObjectAnimator animReduceX, animReduceY;
     private ObjectAnimator animIncreaseX, animIncreaseY;
     private AnimatorSet animSet;
-    private AnimListener animListener = new AnimListener();
+    private final AnimListener animListener = new AnimListener();
     private long duration = 250;
     private boolean isFirstSelected = true;
 
@@ -52,7 +52,8 @@ public class SimpleVerticalTabAdapter extends TabBaseAdapter {
     protected View onCreateTabView(ViewGroup parentView, int viewType, int position) {
         if (viewGroup == null) viewGroup = parentView;
         TextView textView = new TextView(parentView.getContext());
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, dip2px(parentView.getContext(), tabHeight));
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                dip2px(parentView.getContext(), tabHeight));
         textView.setLayoutParams(layoutParams);
         textView.setTextColor(Color.parseColor("#000000"));
         textView.setTextSize(13f);
@@ -64,19 +65,31 @@ public class SimpleVerticalTabAdapter extends TabBaseAdapter {
     @Override
     protected void onSelectedTabView(View tabView, int position, boolean isSmooth) {
         if (!hasAddCursor) {
-            RelativeLayout.LayoutParams paramsTab = new RelativeLayout.LayoutParams(dip2px(tabView.getContext(), 3), dip2px(tabView.getContext(), 24));
+            RelativeLayout.LayoutParams paramsTab = new RelativeLayout.LayoutParams(dip2px(tabView.getContext(), 3),
+                    dip2px(tabView.getContext(), 24));
             viewGroup.addView(cursor, paramsTab);
             hasAddCursor = true;
         }
         if ((animIncreaseX != null && animSet.isRunning()) || (animReduceX != null && animSet.isRunning()))
             return;
-        if (preView != null && preView == tabView) return;
+        if (preView != null && preView == tabView) {
+            return;
+        }
 
         animSet = new AnimatorSet();
-        animIncreaseX = ObjectAnimator.ofFloat(tabView, "scaleX", 1 / 1.1f, 1f);
-        animIncreaseY = ObjectAnimator.ofFloat(tabView, "scaleY", 1 / 1.1f, 1f);
+        animIncreaseX = ObjectAnimator.ofFloat(tabView,
+                "scaleX",
+                1 / 1.1f,
+                1f);
+        animIncreaseY = ObjectAnimator.ofFloat(tabView,
+                "scaleY",
+                1 / 1.1f,
+                1f);
 
-        animTranslate = ObjectAnimator.ofFloat(cursor, "translationY", cursor.getY(), tabView.getY() + offY);
+        animTranslate = ObjectAnimator.ofFloat(cursor,
+                "translationY",
+                cursor.getY(),
+                tabView.getY() + offY);
 
         ((TextView) tabView).setTextColor(Color.parseColor("#b60909"));
 
@@ -100,7 +113,7 @@ public class SimpleVerticalTabAdapter extends TabBaseAdapter {
         preView = tabView;
     }
 
-    private class AnimListener implements Animator.AnimatorListener {
+    private static class AnimListener implements Animator.AnimatorListener {
 
         private TextView view;
         private TextView preView;
