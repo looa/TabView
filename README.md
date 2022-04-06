@@ -1,11 +1,11 @@
-#TabView 
+# TabView 
 
 [![](https://jitpack.io/v/looa/TabView.svg)](https://jitpack.io/#looa/TabView)
 
 supports vertical and horizontal tab style.
 
 
-##Requirements
+## Requirements
 TabView can be included in any Android application.
 TabView supports OS on API 15 and above.
 
@@ -16,16 +16,16 @@ include
 > * SimpleTabAdapter
 > * SimpleVerticalTabAdapter
 
-##Using TabView in your Application
+## Using TabView in your Application
 If you are building with Gradle, simply add the following line to the `dependencies` section of your `build.gradle` file:
 ```groovy
 complie 'com.github.looa:TabView:0.1.1'
 ```
 
-##Sample
+## Sample
 ![screenshots](https://raw.githubusercontent.com/looa/TabView/master/REDEME/show_001.gif)  ![sreenshots-02](https://raw.githubusercontent.com/looa/TabView/master/REDEME/show_002.gif)
-###xml
-```groovy
+### xml
+```xml
 <org.looa.tabview.widget.TabView
         android:id="@+id/tab_simple"
         android:layout_width="match_parent"
@@ -34,8 +34,8 @@ complie 'com.github.looa:TabView:0.1.1'
         android:overScrollMode="never"
         android:scrollbars="none" />
 ```
-###java
-```groovy
+### java
+```java
         List<String> data = new ArrayList<>();
 
         data.add("Google");
@@ -69,7 +69,7 @@ complie 'com.github.looa:TabView:0.1.1'
         viewPager.addOnPageChangeListener(tabView);
 ```
 and you can create your adapter to demand your requirements ↓↓↓
-```groovy
+``` java
 public class SimpleTabAdapter extends TabBaseAdapter{
 
   protected View onCreateTabView(ViewGroup parentView, int viewType, int position){
