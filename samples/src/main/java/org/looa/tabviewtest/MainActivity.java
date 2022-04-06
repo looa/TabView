@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_reset_tab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // step 1. 获取当前 tab 的 position
+                int position = tabView.getCurPosition();
+
+                // step 2. 重建 tab 数据，重新绘制 tab
                 final List<String> data = new ArrayList<>();
                 data.add("No.1");
                 data.add("No.2 - Google");
@@ -101,11 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 data.add("No.8 - Alibaba");
                 data.add("No.9 - Tencent");
 
-                int position = tabView.getCurPosition();
-
                 adapter.setData(data);
                 adapter.notifyDataSetChanged();
 
+                // step 3. 恢复 tab 重绘之前的 position
                 tabView.setTabCurPosition(position, false);
                 viewPager.setCurrentItem(position);
             }
