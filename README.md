@@ -19,7 +19,7 @@ include
 ## Using TabView in your Application
 If you are building with Gradle, simply add the following line to the `dependencies` section of your `build.gradle` file:
 ```groovy
-complie 'com.github.looa:TabView:0.1.1'
+complie 'com.github.looa:TabView:1.0.0'
 ```
 
 ## Sample
