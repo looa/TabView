@@ -28,7 +28,9 @@ public abstract class TabBaseAdapter<T> {
      */
     public void notifyDataSetChanged() {
         sizePre = getCount();
-        if (listener != null) listener.replace();
+        if (listener != null) {
+            listener.replace();
+        }
     }
 
     /**

@@ -371,10 +371,16 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         adapter.onSelectedTabView(getTabView(position), position, isSmooth);
         if (isSmoothShowEdgeItem && sizeOff > 0) {
             View tabView = getTabView(position);
-            if (tabView == null) return;
-            if (tabWidth == 0) tabWidth = tabView.getWidth();
+            if (tabView == null) {
+                return;
+            }
+            if (tabWidth == 0) {
+                tabWidth = tabView.getWidth();
+            }
             float dx = tabView.getX() - scrollSize;
-            if (dx > sizeOff && dx < getWidth() - sizeOff - tabWidth) return;
+            if (dx > sizeOff && dx < getWidth() - sizeOff - tabWidth) {
+                return;
+            }
             if (isSmooth) {
                 smoothScrollBy(dx <= sizeOff ? (int) (dx - sizeOff) : (int) (dx - getWidth() + sizeOff + tabWidth), 0);
             } else {

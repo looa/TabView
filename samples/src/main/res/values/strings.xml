@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TabViewTest</string>
+    <string name="str_reset_tab">Reset Tab</string>
 </resources>
