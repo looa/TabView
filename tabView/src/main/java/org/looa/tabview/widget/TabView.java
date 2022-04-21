@@ -110,10 +110,6 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
         setAutoFillParent(false);
     }
 
-    private void initData() {
-        initTabList();
-    }
-
     private void initView(Context context) {
         setFillViewport(true);
         holder = new RelativeLayout(context);
@@ -441,7 +437,6 @@ public class TabView extends HorizontalScrollView implements ViewPager.OnPageCha
     public <T> void setAdapter(TabBaseAdapter<T> adapter) {
         this.adapter = adapter;
         this.adapter.setOnUpdateListener(onUpdatedListener);
-        initData();
         adapter.notifyDataSetChanged();
     }
 

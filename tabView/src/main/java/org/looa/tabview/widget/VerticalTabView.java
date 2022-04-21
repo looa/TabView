@@ -34,8 +34,8 @@ public class VerticalTabView extends ScrollView {
 
     private TabBaseAdapter adapter;
     private List<View> tabViewList;
-    private TabUpdatedListener onUpdatedListener = new TabUpdatedListener();
-    private OnTabClickedListener onTabClickedListener = new OnTabClickedListener();
+    private final TabUpdatedListener onUpdatedListener = new TabUpdatedListener();
+    private final OnTabClickedListener onTabClickedListener = new OnTabClickedListener();
 
     /**
      * if isSmoothShowEdgeItem == true
@@ -61,10 +61,6 @@ public class VerticalTabView extends ScrollView {
         setSmoothShowEdgeItemEnable(true);
         setSmoothShowEdgeSizeOff(120);
 
-    }
-
-    private void initData() {
-        initTabList();
     }
 
     private void initView(Context context) {
@@ -184,7 +180,6 @@ public class VerticalTabView extends ScrollView {
     public void setAdapter(TabBaseAdapter adapter) {
         this.adapter = adapter;
         this.adapter.setOnUpdateListener(onUpdatedListener);
-        initData();
         adapter.notifyDataSetChanged();
     }
 
